@@ -1,10 +1,9 @@
 const express = require('express')
+const routes = require('./src/routes')
 const PORT = 3000;
 const app = express()
+routes(app)
 
-app.get("/", function (req, res) {
-  console.log("Welcome to main page");
-})
 
 
 app.listen(PORT, () => {
