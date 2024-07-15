@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const db = require('../models')
 //GET all employees
 exports.getAll = async (req, res, next) => {
@@ -19,6 +20,30 @@ exports.getEmployee = async (req, res, next) => {
       return res.status(400).json({ message: 'User not found!' })
     }
     res.status(200).json(employee)
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+
+}
+
+exports.deletedEmployee = async (req, res, next) => {
+
+  try {
+    console.log('data');
+
+    const employeesDeleted = await db.Employee.findAll({
+      where: {
+        deletedAt: {
+          [Op.not]: null
+        }
+      },
+      paranoid: false  // Incluir registros soft-deleted
+    });
+    if (employeesDeleted.length === 0) {
+      return res.status(400).json({ message: 'User not found!' })
+    }
+    return res.status(200).json(employeesDeleted)
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
