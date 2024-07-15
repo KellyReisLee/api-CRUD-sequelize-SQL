@@ -1,20 +1,34 @@
 'use strict';
 const { Model } = require('sequelize');
+
 module.exports = (sequelize, Sequelize) => {
   class Employee extends Model {
     static associate(models) {
-      // define association here
+      // Defina associações aqui, se houver
     }
   }
+
   Employee.init({
     name: {
       type: Sequelize.STRING(120),
-      allowNull: false
+      allowNull: false,
+      validate: {
+        nameLength(value) {
+          if (value.length < 3) {
+            throw new Error("Must contain at least 3 characters. ");
+          }
+        },
+      },
     },
     email: {
       type: Sequelize.STRING(50),
       allowNull: false,
-      unique: true
+      unique: true,
+      validate: {
+        isEmail: {
+          msg: 'Must be a valid email.'
+        }
+      }
     },
     gender: {
       type: Sequelize.STRING,
@@ -29,7 +43,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     mobile: {
       type: Sequelize.STRING(50),
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,
