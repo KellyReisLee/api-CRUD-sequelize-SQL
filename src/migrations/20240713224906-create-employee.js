@@ -9,24 +9,17 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING(120),
-        allowNull: false
-      },
-      email: {
-        type: Sequelize.STRING(50),
+      profile_id: {
         allowNull: false,
-        unique: true
+        type: Sequelize.INTEGER,
+        references: { model: 'profiles', key: 'id' }
       },
-      gender: {
-        type: Sequelize.STRING,
+      sector_id: {
         allowNull: false,
-        defaultValue: 'male'
+        type: Sequelize.INTEGER,
+        references: { model: 'sectors', key: 'id' }
       },
-      mobile: {
-        type: Sequelize.STRING(50),
-        allowNull: true
-      },
+
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
