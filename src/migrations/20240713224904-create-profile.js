@@ -9,14 +9,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING(120),
-        allowNull: false
-      },
+
       email: {
         type: Sequelize.STRING(50),
         allowNull: false,
         unique: true
+      },
+      cpf: {
+        type: Sequelize.STRING
       },
       gender: {
         type: Sequelize.STRING,
@@ -27,9 +27,7 @@ module.exports = {
         type: Sequelize.STRING(50),
         allowNull: true
       },
-      cpf: {
-        type: Sequelize.STRING
-      },
+
       profession: {
         type: Sequelize.STRING
       },

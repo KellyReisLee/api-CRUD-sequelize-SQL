@@ -2,7 +2,7 @@
 const {
   Model
 } = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize, Sequelize) => {
   class Profile extends Model {
     /**
      * Helper method for defining associations.
@@ -14,10 +14,38 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Profile.init({
-    name: DataTypes.STRING,
-    cpf: DataTypes.STRING,
-    address: DataTypes.STRING,
-    profession: DataTypes.STRING
+
+    email: {
+      type: Sequelize.STRING(50),
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: {
+          msg: 'Must be a valid email.'
+        }
+      }
+    },
+    gender: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      defaultValue: 'male',
+      validate: {
+        isIn: {
+          args: [['male', 'female', 'other']],
+          msg: "Gender must be 'male', 'female', or 'other'"
+        }
+      }
+    },
+    mobile: {
+      type: Sequelize.STRING(50),
+      allowNull: false
+    },
+    cpf: {
+      type: Sequelize.STRING
+    },
+    profession: {
+      type: Sequelize.STRING
+    },
   }, {
     sequelize,
     modelName: 'Profile',

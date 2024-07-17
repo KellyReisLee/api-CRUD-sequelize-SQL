@@ -20,31 +20,6 @@ module.exports = (sequelize, Sequelize) => {
         },
       },
     },
-    email: {
-      type: Sequelize.STRING(50),
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: {
-          msg: 'Must be a valid email.'
-        }
-      }
-    },
-    gender: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      defaultValue: 'male',
-      validate: {
-        isIn: {
-          args: [['male', 'female', 'other']],
-          msg: "Gender must be 'male', 'female', or 'other'"
-        }
-      }
-    },
-    mobile: {
-      type: Sequelize.STRING(50),
-      allowNull: false
-    }
   }, {
     sequelize,
     modelName: 'Employee',
