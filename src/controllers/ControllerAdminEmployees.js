@@ -1,9 +1,13 @@
-const { Op } = require('sequelize');
-const db = require('../models')
+const { Op, where } = require('sequelize');
+const db = require('../models');
+const profile = require('../models/profile');
+
+
+
 //GET all employees
-exports.getAll = async (req, res, next) => {
+exports.getAllEmployeesProfile = async (req, res, next) => {
   try {
-    const employees = await db.Employee.findAll();
+    const employees = await db.Profile.findAll();
     res.status(200).json(employees)
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -11,11 +15,11 @@ exports.getAll = async (req, res, next) => {
 
 }
 
-
-exports.getEmployee = async (req, res, next) => {
+// GET employee by id:
+exports.getEmployeeProfile = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const employee = await db.Employee.findByPk(id);
+    const employee = await db.Profile.findByPk(id);
     if (!employee) {
       return res.status(400).json({ message: 'User not found!' })
     }
@@ -25,17 +29,13 @@ exports.getEmployee = async (req, res, next) => {
   }
 
 }
-
-exports.deletedEmployee = async (req, res, next) => {
+// Employees deleted:
+exports.deletedEmployeeProfile = async (req, res, next) => {
 
   try {
-    console.log('data');
-
     const employeesDeleted = await db.Employee.findAll({
       where: {
-        deletedAt: {
-          [Op.not]: null
-        }
+        status: 'Disabled'
       },
       paranoid: false  // Incluir registros soft-deleted
     });
@@ -51,30 +51,47 @@ exports.deletedEmployee = async (req, res, next) => {
 }
 
 
+exports.getAllSectors = async (req, res, next) => {
 
-exports.postEmployee = async (req, res, next) => {
-  const { name, email, gender, mobile } = req.body;
+
+}
+
+
+// Create new Employee
+exports.postEmployeeProfile = async (req, res, next) => {
+  const { name, email, gender, mobile, cpf, profession, sector } = req.body;
+  const sectorUser = await db.Sector.findOrCreate({
+    where: { type: sector },
+    defaults: { type: sector }
+  });
+  const sectorUserId = sectorUser[0].id
   try {
-    // const user = await db.Employee.create({
 
-    //   // name: req.body.name,
-    //   // email: req.body.email,
-    //   // gender: req.body.gender,
-    //   // mobile: req.body.mobile
-    // });
-    const dataEmployee = await db.Employee.findOrCreate({
-      where: { email },
-      defaults: { name, email, gender, mobile },
+    const dataEmployee = await db.Profile.findOrCreate({
+      where: { cpf },
+      defaults: { name, email, cpf, gender, mobile, profession, sector_id: sectorUserId }
     });
 
+
+
     if (dataEmployee[1] === true) {
+      const profileUser = await db.Profile.findAll({
+        where: { cpf }
+      })
+
+      const profileUserId = profileUser[0].id
+
+      if (sectorUserId) {
+        await db.Employee.create({ profile_id: profileUserId, sector_id: sectorUserId })
+      }
       return res.status(201).json({ message: 'Created Successfully', data: dataEmployee[0] })
     } else {
-      return res.status(201).json({ message: 'This email already exist.' })
+      return res.status(201).json({ message: 'This CPF already exist.' })
     }
 
 
   } catch (error) {
+    console.log(error);
     if (error.name) {
       const messages = error.errors.map(err => err.message);
       return res.status(400).json({ errors: messages });
@@ -84,21 +101,21 @@ exports.postEmployee = async (req, res, next) => {
 };
 
 
-
-exports.updateEmployee = async (req, res, next) => {
+//Update employee
+exports.updateEmployeeProfile = async (req, res, next) => {
   const { id } = req.params;
   const newData = req.body;
   try {
     //const employee = await db.Employee.findByPk(id);
 
-    const data = await db.Employee.update(
+    const data = await db.Profile.update(
       { ...newData }, // Campos e novos valores
       {
         where: { id }, // Condição de onde atualizar
       }
     );
 
-    const newUser = await db.Employee.findByPk(id)
+    const newUser = await db.Profile.findByPk(id)
     if (!data[0]) {
       return res.status(400).json({ message: 'Data not found!' })
     }
@@ -111,11 +128,20 @@ exports.updateEmployee = async (req, res, next) => {
 };
 
 
-exports.deleteEmployee = async (req, res, next) => {
+// Delete employee
+exports.deleteEmployeeProfile = async (req, res, next) => {
   const { id } = req.params;
-  const employee = await db.Employee.findByPk(id);
+  const employee = await db.Profile.findByPk(id);
   try {
-    const deleteEmployee = await db.Employee.destroy({
+    await db.Employee.update(
+      { status: 'disabled' },
+      {
+        where: {
+          profile_id: id
+        }
+      }
+    )
+    const deleteEmployee = await db.Profile.destroy({
       where: { id }
     });
     if (!deleteEmployee) {

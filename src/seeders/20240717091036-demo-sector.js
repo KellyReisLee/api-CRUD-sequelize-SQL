@@ -6,13 +6,13 @@ module.exports = {
 
     await queryInterface.bulkInsert('sectors', [
       {
-        name: 'Engineer',
+
         type: 'IT',
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        name: 'Food and beverage',
+
         type: 'Food',
         createdAt: new Date(),
         updatedAt: new Date()

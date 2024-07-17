@@ -9,6 +9,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      name: {
+        type: Sequelize.STRING(120),
+        allowNull: false
+      },
 
       email: {
         type: Sequelize.STRING(50),
@@ -16,7 +20,9 @@ module.exports = {
         unique: true
       },
       cpf: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
       },
       gender: {
         type: Sequelize.STRING,
@@ -30,6 +36,13 @@ module.exports = {
 
       profession: {
         type: Sequelize.STRING
+      },
+      sector_id: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: { model: 'sectors', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,

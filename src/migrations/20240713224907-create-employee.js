@@ -9,19 +9,24 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING(120),
+      status: {
+        type: Sequelize.STRING,
+        defaultValue: 'ativo',
         allowNull: false
       },
       profile_id: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: { model: 'profiles', key: 'id' }
+        references: { model: 'profiles', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       sector_id: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: { model: 'sectors', key: 'id' }
+        references: { model: 'sectors', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
 
       createdAt: {

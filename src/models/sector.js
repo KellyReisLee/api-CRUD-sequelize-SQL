@@ -4,22 +4,26 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Sector extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+
     static associate(models) {
-      // define association here
+      Sector.hasMany(models.Employee, {
+        foreignKey: 'sector_id',
+        onDelete: 'CASCADE'
+      });
+
+      Sector.hasMany(models.Profile, {
+        foreignKey: 'sector_id',
+        onDelete: 'CASCADE'
+      });
     }
   }
   Sector.init({
-    name: DataTypes.STRING,
     type: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Sector',
-    tableName: 'sectors'
+    tableName: 'sectors',
+    paranoid: true,
   });
   return Sector;
 };
